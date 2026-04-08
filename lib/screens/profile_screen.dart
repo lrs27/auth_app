@@ -23,10 +23,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _updatePassword() async {
     try {
       await AuthService.instance.changePassword(_passwordController.text);
-      setState(() => _message = 'Password updated successfully');
+
+      setState(() {
+        _message = 'Password updated successfully';
+      });
+
       _passwordController.clear();
     } catch (e) {
-      setState(() => _message = 'Error: $e');
+      setState(() {
+        _message = 'Error: $e';
+      });
     }
   }
 
@@ -35,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (!mounted) return;
 
+    // Guaranteed return to login screen
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const AuthenticationScreen()),
@@ -76,7 +83,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               trailing: Icon(
                 _changing ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
               ),
-              onTap: () => setState(() => _changing = !_changing),
+              onTap: () {
+                setState(() {
+                  _changing = !_changing;
+                });
+              },
             ),
 
             if (_changing)
