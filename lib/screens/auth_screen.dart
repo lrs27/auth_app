@@ -24,6 +24,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     super.dispose();
   }
 
+  // -------------------------
+  // SIGN IN
+  // -------------------------
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -34,8 +37,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
     try {
       await AuthService.instance.signIn(
-        _emailController.text,
-        _passwordController.text,
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
 
       if (!mounted) return;
@@ -51,10 +54,43 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
   }
 
+  // -------------------------
+  // REGISTER NEW USER
+  // -------------------------
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      await AuthService.instance.register(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      );
+    } catch (e) {
+      setState(() => _error = 'Registration failed: $e');
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  // -------------------------
+  // UI
+  // -------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Authentication')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -66,11 +102,17 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return 'Email is required';
-                  if (!value.contains('@')) return 'Enter a valid email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Enter a valid email';
+                  }
                   return null;
                 },
               ),
@@ -79,7 +121,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.length < 6) {
@@ -91,11 +136,26 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
               const SizedBox(height: 20),
 
-              ElevatedButton(
-                onPressed: _loading ? null : _signIn,
-                child: _loading
-                    ? const CircularProgressIndicator()
-                    : const Text('Sign In'),
+              // SIGN IN BUTTON
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _loading ? null : _signIn,
+                  child: _loading
+                      ? const CircularProgressIndicator()
+                      : const Text('Sign In'),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // REGISTER BUTTON
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _loading ? null : _register,
+                  child: const Text('Create Account'),
+                ),
               ),
             ],
           ),
