@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'profile_screen.dart';
+import 'register_screen.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -150,12 +151,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               const SizedBox(height: 8),
 
               // REGISTER BUTTON
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: _loading ? null : _register,
-                  child: const Text('Create Account'),
-                ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                  );
+                },
+                child: const Text("Create an Account"),
               ),
             ],
           ),
