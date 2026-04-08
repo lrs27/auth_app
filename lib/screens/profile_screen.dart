@@ -41,7 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (!mounted) return;
 
-    // Guaranteed return to login screen
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const AuthenticationScreen()),
@@ -54,17 +53,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: const Text('Profile'),
         actions: [
-          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
+          IconButton(
+            onPressed: _logout,
+            icon: const Icon(Icons.logout, color: Colors.white),
+          ),
         ],
       ),
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFEDE7F6), Color(0xFFF3E5F5)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Logged in as: ${user?.email ?? "Unknown"}'),
+            Text(
+              'Logged in as:',
+              style: TextStyle(fontSize: 18, color: Colors.deepPurple.shade700),
+            ),
+            Text(
+              user?.email ?? "Unknown",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 132, 214, 249),
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -82,6 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: const Text('Change Password'),
               trailing: Icon(
                 _changing ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                color: Colors.deepPurple,
               ),
               onTap: () {
                 setState(() {
@@ -95,14 +117,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   TextField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'New Password',
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 144, 234, 255),
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: _updatePassword,
                     child: const Text('Update Password'),
                   ),
